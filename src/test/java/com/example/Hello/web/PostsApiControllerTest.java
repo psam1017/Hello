@@ -4,6 +4,7 @@ import com.example.Hello.domain.posts.Posts;
 import com.example.Hello.domain.posts.PostsRepository;
 import com.example.Hello.web.dto.PostsSaveRequestDto;
 import com.example.Hello.web.dto.PostsUpdateRequestDto;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class PostsApiControllerTest {
 
@@ -97,5 +100,29 @@ class PostsApiControllerTest {
         List<Posts> all = postsRepository.findAll();
         assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
         assertThat(all.get(0).getContent()).isEqualTo(expectedContent);
+    }
+
+    @Test
+    public void BaseTimeEntity_등록() {
+
+        // given
+        LocalDateTime compareDate = LocalDateTime.of(2019, 6, 4, 0, 0, 0);
+
+        postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        // when
+        List<Posts> postsList = postsRepository.findAll();
+
+        // then
+        Posts posts = postsList.get(0);
+
+        log.info("created time = {}, modified time = {}", posts.getCreatedDate(), posts.getModifiedTDate());
+
+        assertThat(posts.getCreatedDate()).isAfter(compareDate);
+        assertThat(posts.getModifiedTDate()).isAfter(compareDate);
     }
 }
