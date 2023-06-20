@@ -4,6 +4,12 @@ var main = {
         $('#btn-save').on('click', function () {
             _this.save();
         });
+        $('#btn-update').on('click', function () {
+            _this.update();
+        });
+        $('#btn-delete').on('click', function () {
+            _this.delete();
+        });
     },
     save: function () {
         var data = {
@@ -19,11 +25,47 @@ var main = {
             contentType: 'application/json; charset=utf-8',
             data: JSON.stringify(data)
         }).done(function () {
-            alert('글이 등록되었습니다.');
+            alert('The post is saved!');
             window.location.href = '/';
         }).fail(function (error) {
             alert(JSON.stringify(error));
         });
+    },
+    update: function () {
+        var data = {
+            title: $('#title').val(),
+            content: $('#content').val()
+        };
+
+        var id = $('#id').val();
+
+        $.ajax({
+            type: 'PUT',
+            url: `/api/v1/posts/${id}`,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+            data: JSON.stringify(data)
+        }).done(function () {
+            alert('The Post is updated!');
+            window.location.href="/";
+        }).fail(function (error) {
+            alert(JSON.stringify(error));
+        })
+    },
+    delete: function () {
+        var id = $('#id').val();
+
+        $.ajax({
+            type: 'DELETE',
+            url: `/api/v1/posts/${id}`,
+            contentType: 'application/json; charset=utf-8',
+            dataType: 'json',
+        }).done(function () {
+            alert('The Post is deleted!');
+            window.location.href="/";
+        }).fail(function (error) {
+            alert(JSON.stringify(error));
+        })
     }
 };
 
